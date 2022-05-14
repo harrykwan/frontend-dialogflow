@@ -1,0 +1,98 @@
+<html>
+
+<head>
+    <script src="https://cdn.jsdelivr.net/npm/p5@1.4.1/lib/p5.js"></script>
+    <script src="p5.sound.js"></script>
+
+    <script src="sketch.js"></script>
+    <script src="https://www.WebRTC-Experiment.com/RecordRTC.js"></script>
+
+</head>
+
+<body>
+
+    <div>
+        <button id="start-recording" disabled>Start Recording</button>
+        <button id="stop-recording" disabled>Stop Recording</button>
+    </div>
+    <textarea id="results" style="width: 800px; height: 300px;"></textarea>
+
+    <script>
+        const startRecording = document.getElementById('start-recording');
+        const stopRecording = document.getElementById('stop-recording');
+        let recordAudio;
+
+        //2)
+        startRecording.disabled = false;
+
+        //3)
+        startRecording.onclick = function () {
+            startRecording.disabled = true;
+
+            //4)
+            navigator.getUserMedia({
+                audio: true
+            }, function (stream) {
+
+                //5)
+                recordAudio = RecordRTC(stream, {
+                    type: 'audio',
+
+                    //6)
+                    mimeType: 'audio/webm',
+                    sampleRate: 44100,
+                    // used by StereoAudioRecorder
+                    // the range 22050 to 96000.
+                    // let us force 16khz recording:
+                    desiredSampRate: 16000,
+
+                    // MediaStreamRecorder, StereoAudioRecorder, WebAssemblyRecorder
+                    // CanvasRecorder, GifRecorder, WhammyRecorder
+                    recorderType: StereoAudioRecorder,
+                    // Dialogflow / STT requires mono audio
+                    numberOfAudioChannels: 1
+                });
+
+                recordAudio.startRecording();
+                stopRecording.disabled = false;
+            }, function (error) {
+                console.error(JSON.stringify(error));
+            });
+        };
+
+        stopRecording.onclick = function () {
+            // recording stopped
+            startRecording.disabled = false;
+            stopRecording.disabled = true;
+
+            // stop audio recorder
+            recordAudio.stopRecording(function () {
+                // after stopping the audio, get the audio data
+                const soundBlob = recordAudio.getBlob()
+                console.log(recordAudio.getBlob())
+                // recordAudio.getDataURL(function (audioDataURL) {
+                var formdata = new FormData();
+                formdata.append("", soundBlob, "mySound.webm");
+
+                var requestOptions = {
+                    method: "POST",
+                    body: formdata,
+                    redirect: "follow",
+                };
+
+                fetch("http://localhost:8080/api/agent/voice-input", requestOptions)
+                    .then((response) => response.text())
+                    .then((result) => {
+                        console.log(result)
+                        document.getElementById('results').value = JSON.parse(result).data
+                    })
+                    .catch((error) => console.log("error", error));
+
+
+            });
+        };
+
+    </script>
+</body>
+
+</html>
