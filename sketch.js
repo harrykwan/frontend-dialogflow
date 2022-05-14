@@ -3,7 +3,8 @@ let state = 0;
 
 function setup() {
   // create an audio in
-
+  capture = createCapture(VIDEO);
+  capture.size(320, 240);
   frameRate(4);
   mic = new p5.AudioIn();
   mic.start();
