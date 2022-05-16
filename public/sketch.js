@@ -3,8 +3,6 @@ let state = 0;
 
 function setup() {
   // create an audio in
-  capture = createCapture(VIDEO);
-  capture.size(320, 240);
   frameRate(4);
   mic = new p5.AudioIn();
   mic.start();
@@ -22,6 +20,8 @@ function startlistening() {
 
 var prevfft;
 var talking = false;
+var starttalkingrate = 0;
+
 function draw() {
   let nowfft = fft.analyze();
   if (!prevfft) {
@@ -54,11 +54,12 @@ function draw() {
 
   if (talkingrate > 100) {
     if (!talking) {
+      starttalkingrate = talkingrate;
       talking = true;
       console.log("start talking");
       document.getElementById("start-recording").click();
     }
-  } else if (talkingrate < 10) {
+  } else if (talkingrate < starttalkingrate / 10) {
     if (talking) {
       talking = false;
       console.log("end talking");

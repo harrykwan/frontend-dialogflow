@@ -81,7 +81,7 @@
                     redirect: "follow",
                 };
 
-                fetch("http://localhost:8080/api/agent/voice-input", requestOptions)
+                fetch("api/agent/voice-input", requestOptions)
                     .then((response) => response.text())
                     .then((result) => {
                         console.log(result)
