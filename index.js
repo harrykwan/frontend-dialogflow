@@ -13,7 +13,7 @@ app.use(cors());
 app.use(express.static("public"));
 
 app.get("/", function (req, res) {
-  res.sendFile("index.html");
+  res.sendFile("zoom.html");
 });
 
 app.use("/api/agent", Routes);
