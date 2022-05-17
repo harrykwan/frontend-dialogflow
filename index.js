@@ -2,6 +2,7 @@
 const express = require("express");
 const dotenv = require("dotenv");
 const cors = require("cors");
+const path = require("path");
 
 const Routes = require("./agentRoutes");
 
@@ -10,11 +11,12 @@ const app = express();
 const PORT = process.env.PORT || 8080;
 
 app.use(cors());
-app.use(express.static("public"));
 
 app.get("/", function (req, res) {
-  res.sendFile("zoom.html");
+  res.sendFile(path.join(__dirname, "./public", "zoom.html"));
 });
+
+app.use(express.static("public"));
 
 app.use("/api/agent", Routes);
 // app.use(express.json())
