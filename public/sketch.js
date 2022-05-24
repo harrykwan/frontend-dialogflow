@@ -1,6 +1,8 @@
 let mic, recorder, soundFile;
 let state = 0;
 
+let talkingratelimit = 100;
+
 function setup() {
   // create an audio in
   frameRate(4);
@@ -23,6 +25,12 @@ var talking = false;
 var starttalkingrate = 0;
 
 function draw() {
+  if (document.getElementById("micsensitivityinput")) {
+    talkingratelimit =
+      -10 *
+        (parseInt(document.getElementById("micsensitivityinput").value) - 100) +
+      100;
+  }
   let nowfft = fft.analyze();
   if (!prevfft) {
     prevfft = nowfft;
@@ -52,7 +60,7 @@ function draw() {
     5;
   // console.log(talkingrate);
 
-  if (talkingrate > 100) {
+  if (talkingrate > talkingratelimit) {
     if (!talking) {
       starttalkingrate = talkingrate;
       talking = true;
