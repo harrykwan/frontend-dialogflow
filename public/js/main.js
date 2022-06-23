@@ -2,6 +2,9 @@ let myVideoStream;
 const myVideo = document.createElement("video");
 myVideo.muted = true;
 
+var speaking = false;
+var volumnhistory = [];
+
 const addVideoStream = (video, stream) => {
   video.srcObject = stream;
   video.addEventListener("loadedmetadata", () => {
@@ -24,13 +27,38 @@ navigator.mediaDevices
 
     speechEvents.on("speaking", function () {
       console.log("speaking");
+      speaking = true;
+      recordAudio = RecordRTC(stream, {
+        type: "audio",
+
+        //6)
+        mimeType: "audio/webm",
+        sampleRate: 44100,
+        // used by StereoAudioRecorder
+        // the range 22050 to 96000.
+        // let us force 16khz recording:
+        desiredSampRate: 16000,
+
+        // MediaStreamRecorder, StereoAudioRecorder, WebAssemblyRecorder
+        // CanvasRecorder, GifRecorder, WhammyRecorder
+        recorderType: StereoAudioRecorder,
+        // Dialogflow / STT requires mono audio
+        numberOfAudioChannels: 1,
+      });
+
+      recordAudio.startRecording();
       startRecording.click();
     });
     speechEvents.on("stopped_speaking", function () {
       console.log("stopped");
-      stopRecording.click();
+      speaking = false;
+      setTimeout(() => {
+        stopRecording.click();
+      }, 1000);
     });
-    speechEvents.on("volume_change", function (volume, threshold) {});
+    speechEvents.on("volume_change", function (volume, threshold) {
+      // console.log(volume + " " + threshold);
+    });
   });
 
 //auto start auto stop script
@@ -53,25 +81,7 @@ startRecording.onclick = function () {
     },
     function (stream) {
       //5)
-      recordAudio = RecordRTC(stream, {
-        type: "audio",
 
-        //6)
-        mimeType: "audio/webm",
-        sampleRate: 44100,
-        // used by StereoAudioRecorder
-        // the range 22050 to 96000.
-        // let us force 16khz recording:
-        desiredSampRate: 16000,
-
-        // MediaStreamRecorder, StereoAudioRecorder, WebAssemblyRecorder
-        // CanvasRecorder, GifRecorder, WhammyRecorder
-        recorderType: StereoAudioRecorder,
-        // Dialogflow / STT requires mono audio
-        numberOfAudioChannels: 1,
-      });
-
-      recordAudio.startRecording();
       stopRecording.disabled = false;
     },
     function (error) {
