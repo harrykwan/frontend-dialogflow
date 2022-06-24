@@ -50,10 +50,10 @@ navigator.mediaDevices
       startRecording.click();
     });
     speechEvents.on("stopped_speaking", function () {
-      console.log("stopped");
-      speaking = false;
       setTimeout(() => {
+        console.log("stopped");
         stopRecording.click();
+        speaking = false;
       }, 1000);
     });
     speechEvents.on("volume_change", function (volume, threshold) {
@@ -118,8 +118,7 @@ stopRecording.onclick = function () {
         const inputmessage = JSON.parse(result).inputtext;
         document.getElementById("results").value =
           outputmessage + " " + inputmessage;
-
-        addnewmessage(inputmessage + ": " + outputmessage);
+        if (inputmessage) addnewmessage(inputmessage + ": " + outputmessage);
       })
       .catch((error) => console.log("error", error));
   });
