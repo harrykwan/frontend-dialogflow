@@ -118,7 +118,10 @@ stopRecording.onclick = function () {
         const inputmessage = JSON.parse(result).inputtext;
         document.getElementById("results").value =
           outputmessage + " " + inputmessage;
-        if (inputmessage) addnewmessage(inputmessage + ": " + outputmessage);
+        if (inputmessage) {
+          addnewmessage(inputmessage, true);
+          addnewmessage(outputmessage);
+        }
       })
       .catch((error) => console.log("error", error));
   });
@@ -129,14 +132,14 @@ const scrollToBottom = () => {
   d.scrollTop(d.prop("scrollHeight"));
 };
 
-function addnewmessage(message) {
+function addnewmessage(message, me) {
   $("ul").append(`<li >
     <span class="messageHeader">
         <span>
             From
-            <span class="messageSender">Someone</span>
+            <span class="messageSender">${me ? "Me" : "AI HELPER"}</span>
             to
-            <span class="messageReceiver">Everyone:</span>
+            <span class="messageReceiver">${me ? "AI HELPER" : "Me"}:</span>
         </span>
 
         ${new Date().toLocaleString("en-US", {
