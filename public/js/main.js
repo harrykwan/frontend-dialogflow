@@ -137,9 +137,9 @@ function addnewmessage(message, me) {
     <span class="messageHeader">
         <span>
             From
-            <span class="messageSender">${me ? "Me" : "AI HELPER"}</span>
+            <span class="messageSender">${me ? "Me" : "AI Patient"}</span>
             to
-            <span class="messageReceiver">${me ? "AI HELPER" : "Me"}:</span>
+            <span class="messageReceiver">${me ? "AI Patient" : "Me"}:</span>
         </span>
 
         ${new Date().toLocaleString("en-US", {
